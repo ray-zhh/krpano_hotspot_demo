@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<title>krpano - 3</title>
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="x-ua-compatible" content="IE=edge" />
+	<link href="/assets/css/core.min.css" rel="stylesheet">
+	<link href="/assets/css/app.min.css" rel="stylesheet">
+	<link href="/assets/css/style.min.css" rel="stylesheet">
+
+	<style>
+		html {
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 16px;
+			color: #FFFFFF;
+			background-color: #000000;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="preloader">
+		<div class="spinner-dots">
+			<span class="dot1"></span>
+			<span class="dot2"></span>
+			<span class="dot3"></span>
+		</div>
+	</div>
+
+	<main>
+		<div class="main-content p-0">
+			<div class="h-800px" id="pano">
+
+			</div>
+		</div><!--/.main-content -->
+
+
+		<!-- Footer -->
+		<footer class="site-footer">
+			<button class="btn btn-dark btn-add-switch-scene">场景切换热点</button>
+			<button class="btn btn-dark btn-remove-hotspot">移除热点</button>
+		</footer>
+		<!-- END Footer -->
+
+	</main>
+	<!-- END Main container -->
+
+
+
+	<script src="tour.js"></script>
+	<script src="/assets/js/core.min.js"></script>
+	<script src="/assets/js/app.min.js"></script>
+	<script src="/assets/js/script.min.js"></script>
+
+	<script>
+
+		var krpano = null
+		embedpano({
+			swf: "tour.swf",
+			xml: "tour.xml",
+			target: "pano",
+			html5: "auto",
+			mobilescale: 1.0,
+			passQueryParameters: true,
+			consolelog: true,// 是否在浏览器控制台打印日志信息
+			onready: krpanoOnready,
+		})
+
+		function krpanoOnready(krpano_interface) {
+			krpano = krpano_interface;
+		}
+
+		//添加一个场景切换热点
+		function addHotspot(id, url, h, v) {
+			if (krpano) {
+				h = h || krpano.get("view.hlookat");
+				v = v || krpano.get("view.vlookat");
+				console.log(id)
+				krpano.call("addhotspot('" + id + "')");
+				krpano.set("hotspot[" + id + "].url", url);
+				krpano.set("hotspot[" + id + "].ath", h);
+				krpano.set("hotspot[" + id + "].atv", v);
+				krpano.set("hotspot[" + id + "].distorted", true);
+				krpano.set("hotspot[" + id + "].ondown", "draghotspot();");
+			}
+		}
+
+		// 移除一条热点信息
+		function removeHotspot(id) {
+			if (krpano) {
+				krpano.call("removehotspot(" + id + ")")
+			}
+		}
+
+		// 添加场景切换热点
+		$('.btn-add-switch-scene').on('click', function () {
+			// 随机生成一个id
+			var id = "hs" + ((Date.now() + Math.random()) | 0);
+			addHotspot(id, "imgs/hotspot.png");
+		});
+
+		// 移除热点
+		$('.btn-remove-hotspot').on('click', function () {
+			var id = "hs_001";
+			removeHotspot(id);
+		});
+
+
+		// --------------------- 事件回调 start---------------------
+		function draghotspotCallback() {
+			console.log("draghotspotCallback")
+		}
+		// --------------------- 事件回调 end---------------------
+		console.log(krpano)
+		// 假数据测试
+		var hotspots = [
+			{
+				"id": "hs_001",
+				"h": 2,
+				"v": 0,
+				"url": "imgs/hotspot.png"
+			}
+		]
+
+		hotspots.forEach(hotspot => {
+			console.log(hotspot)
+			addHotspot(hotspot.id, hotspot.url, hotspot.h, hotspot.v)
+		});
+
+
+
+	</script>
+
+
+
+</body>
+
+</html>
